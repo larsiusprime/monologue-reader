@@ -21,7 +21,7 @@ Nothing other than Haxe itself and a valid .mpf file you've created with the Mon
   
  //then you pass all that stuff in:
  
- var controller = new MonologueController({host:myState, json:myData, variables:myVars});
+ var controller = new monologue.Controller({host:myState, json:myData, variables:myVars});
   
  //then load up a tree and run the first node:
  
