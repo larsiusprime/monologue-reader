@@ -22,9 +22,9 @@
  */
 
 package monologue;
-import monologue.MonologueTree.MonologueCondition;
-import monologue.MonologueTree.MonologueOperator;
-import monologue.MonologueTree.MonologueTreeNodeType;
+import monologue.Tree.Condition;
+import monologue.Tree.Operator;
+import monologue.Tree.TreeNodeType;
 
 /**
  * ...
@@ -33,9 +33,7 @@ import monologue.MonologueTree.MonologueTreeNodeType;
 class MonologueHelper
 {
 
-	
-	
-	public static function toCondition(str:String):MonologueCondition
+	public static function toCondition(str:String):Condition
 	{
 		return switch(str)
 		{
@@ -49,7 +47,7 @@ class MonologueHelper
 		}
 	}
 	
-	public static function toTreeNodeType(str:String):MonologueTreeNodeType
+	public static function toTreeNodeType(str:String):TreeNodeType
 	{
 		return switch(str.toLowerCase())
 		{
@@ -60,7 +58,7 @@ class MonologueHelper
 		}
 	}
 	
-	public static function toOperator(str:String):MonologueOperator
+	public static function toOperator(str:String):Operator
 	{
 		return switch(str)
 		{

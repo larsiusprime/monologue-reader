@@ -27,8 +27,8 @@ package monologue;
  * ...
  * @author 
  */
-@:allow(com.leveluplabs.tdrpg.monologue)
-class MonologueTranslation
+@:allow(monologue)
+class Translation
 {
 	public var code:String;
 	public var data:Map<String,String>;
@@ -39,9 +39,9 @@ class MonologueTranslation
 		data = new Map<String,String>();
 	}
 	
-	public static function fromJSON(json:Dynamic):MonologueTranslation
+	public static function fromJSON(json:Dynamic):Translation
 	{
-		var mt = new MonologueTranslation();
+		var mt = new Translation();
 		
 		for (field in Reflect.fields(json))
 		{

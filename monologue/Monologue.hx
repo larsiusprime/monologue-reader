@@ -22,22 +22,22 @@
  */
 
 package monologue;
-import monologue.MonologueTree.MonologueCondition;
-import monologue.MonologueTree.MonologueOperator;
-import monologue.MonologueTree.MonologueTreeNodeType;
+import monologue.Tree.Condition;
+import monologue.Tree.Operator;
+import monologue.Tree.TreeNodeType;
 using monologue.DynamicHelper;
 
-@:allow(com.leveluplabs.tdrpg.monologue)
+@:allow(monologue)
 class Monologue
 {
-	public var name(default, null):String;
-	public var variables:Array<MonologueVariable>;
-	public var customVariables:Array<MonologueVariable>;
-	public var voices:Array<String>;
-	public var treeCategories:Array<String>;
-	public var languages:Map<String,String>;
-	public var trees:Array<MonologueTree>;
-	public var translations:Array<MonologueTranslation>;
+	private var name(default, null):String;
+	private var variables:Array<MonologueVariable>;
+	private var customVariables:Array<MonologueVariable>;
+	private var voices:Array<String>;
+	private var treeCategories:Array<String>;
+	private var languages:Map<String,String>;
+	private var trees:Array<Tree>;
+	private var translations:Array<Translation>;
 	
 	public function new(){}
 	
@@ -113,13 +113,13 @@ class Monologue
 		});
 	}
 	
-	private static function parseTranslations(json:Dynamic):Array<MonologueTranslation>
+	private static function parseTranslations(json:Dynamic):Array<Translation>
 	{
 		return parseArray(json, "translations", function(arr:Array<Dynamic>){
 			var translations = [];
 			for (entry in arr)
 			{
-				var trans:MonologueTranslation = MonologueTranslation.fromJSON(entry);
+				var trans:Translation = Translation.fromJSON(entry);
 				if (trans != null)
 					translations.push(trans);
 			}
@@ -140,13 +140,13 @@ class Monologue
 		});
 	}
 	
-	private static function parseTrees(json:Dynamic):Array<MonologueTree>
+	private static function parseTrees(json:Dynamic):Array<Tree>
 	{
 		return parseArray(json, "trees", function(arr:Array<Dynamic>){
 			var trees = [];
 			for (entry in arr)
 			{
-				var tree:MonologueTree = MonologueTree.fromJSON(entry);
+				var tree:Tree = Tree.fromJSON(entry);
 				if (tree != null)
 					trees.push(tree);
 			}

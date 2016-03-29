@@ -29,33 +29,33 @@ using monologue.MonologueHelper;
  * ...
  * @author 
  */
-@:allow(com.leveluplabs.tdrpg.monologue)
-class MonologueTree
+@:allow(monologue)
+class Tree
 {
 	public var ID(default, null):Int;
 	public var categoryID:Int,
 	public var displayName:String,
-	public var nodes:Array<MonologueTreeNode>;
+	public var nodes:Array<TreeNode>;
 	
 	public function new(){}
 	
-	public static function fromJSON(json:Dynamic):MonologueTree
+	public static function fromJSON(json:Dynamic):Tree
 	{
-		var mt = new MonologueTree();
+		var mt = new Tree();
 		
 		var ID:Int = Std.parseInt(json.jsonVar("id","-1"));
 		var categoryID:String = Std.parseInt(json.jsonVar("categoryId", "-1"));
 		var displayName:String = json.jsonVar("displayName");
-		var nodes:Array<MonologueTreeNode> = json.parseArray("nodes", function(arr:Array<Dynamic>){
-			var nodes:Array<MonologueTreeNode> = [];
+		var nodes:Array<TreeNode> = json.parseArray("nodes", function(arr:Array<Dynamic>){
+			var nodes:Array<TreeNode> = [];
 			for (entry in arr)
 			{
 				var type = Std.string(json.jsonVar("type")).toTreeNodeType();
-				var mNode:MonologueTreeNode = switch(type)
+				var mNode:TreeNode = switch(type)
 				{
-					case BRANCH: MonologueTreeNodeBranch.fromJSON(entry);
-					case TEXT: MonologueTreeNodeBranch.fromJSON(entry);
-					case SET: MonologueTreeNodeBranch.fromJSON(entry);
+					case BRANCH: TreeNodeBranch.fromJSON(entry);
+					case TEXT: TreeNodeBranch.fromJSON(entry);
+					case SET: TreeNodeBranch.fromJSON(entry);
 					default: null;
 				}
 				
@@ -69,26 +69,26 @@ class MonologueTree
 	}
 }
 
-@:allow(com.leveluplabs.tdrpg.monologue)
-class MonologueTreeNode
+@:allow(monologue)
+class TreeNode
 {
 	public var ID(default, null):Int=-1;
-	public var type(default, null):MonologueTreeNodeType;
+	public var type(default, null):TreeNodeType;
 	public var link(default, null):Int =-1;
 	public var locFlag(default, null):String="";
 }
 
-@:allow(com.leveluplabs.tdrpg.monologue)
-class MonologueTreeNodeText extends MonologueTreeNode
+@:allow(monologue)
+class TreeNodeText extends TreeNode
 {
 	public var name(default, null):String="";
 	public var voice(default, null):String = "";
 	
 	public function new(){}
 	
-	public static function fromJSON(json:Dynamic):MonologueTreeNode
+	public static function fromJSON(json:Dynamic):TreeNode
 	{
-		var node = new MonologueTreeNodeText();
+		var node = new TreeNodeText();
 		node.ID = json.jsonVar("id", "-1").toInt();
 		node.type = Std.string(json.jsonVar("type")).toTreeNodeType();
 		node.link = json.jsonVar("link", "-1").toInt();
@@ -97,20 +97,20 @@ class MonologueTreeNodeText extends MonologueTreeNode
 	}
 }
 
-@:allow(com.leveluplabs.tdrpg.monologue)
-class MonologueTreeNodeBranch extends MonologueTreeNode
+@:allow(monologue)
+class TreeNodeBranch extends TreeNode
 {
 	public var variable(default, null):Int = -1;
 	public var value(default, null):Dynamic = null;
-	public var condition(default, null):MonologueCondition=UNKNOWN;
+	public var condition(default, null):Condition=UNKNOWN;
 	public var trueLink(default, null):Int=-1;
 	public var falseLink(default, null):Int =-1;
 	
 	public function new(){}
 	
-	public static function fromJSON(json:Dynamic):MonologueTreeNode
+	public static function fromJSON(json:Dynamic):TreeNode
 	{
-		var node = new MonologueTreeNodeBranch();
+		var node = new TreeNodeBranch();
 		node.ID = json.jsonVar("id", "-1").toInt();
 		node.type = Std.string(json.jsonVar("type")).toTreeNodeType;
 		node.link = json.jsonVar("link", "-1").toInt();
@@ -122,28 +122,28 @@ class MonologueTreeNodeBranch extends MonologueTreeNode
 	}
 }
 
-@:allow(com.leveluplabs.tdrpg.monologue)
-class MonologueTreeNodeSet extends MonologueTreeNode
+@:allow(monologue)
+class TreeNodeSet extends TreeNode
 {
 	public var variable(default, null):Int = -1;
-	public var operation(default, null):MonologueOperator=UNKNOWN;
+	public var operation(default, null):Operator=UNKNOWN;
 	public var value(default, null):String = "";
 	
 	public function new(){}
 	
-	public static function fromJSON(json:Dynamic):MonologueTreeNode
+	public static function fromJSON(json:Dynamic):TreeNode
 	{
-		var node = new MonologueTreeNodeSet();
+		var node = new TreeNodeSet();
 		node.ID = json.jsonVar("id", "-1").toInt();
 		node.type = Std.string(json.jsonVar("type")).toTreeNodeType();
 		node.link = json.jsonVar("link", "-1").toInt();
 		node.variable = json.jsonVar("variable").toInt();
 		node.operation = Std.string(json.jsonVar("operation")).toOperator;
-		node.value = Std.string(json.jsonVar("value",""));
+		node.value = Std.string(json.jsonVar("value", ""));
 	}
 }
 
-enum MonologueTreeNodeType
+enum TreeNodeType
 {
 	BRANCH;
 	SET;
@@ -151,7 +151,7 @@ enum MonologueTreeNodeType
 	CUSTOM;
 }
 
-enum MonologueOperator
+enum Operator
 {
 	SET;
 	INCREMENT;
@@ -159,7 +159,7 @@ enum MonologueOperator
 	UNKNOWN;
 }
 
-enum MonologueCondition
+enum Condition
 {
 	EQUAL;
 	NOT_EQUAL;

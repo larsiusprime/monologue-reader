@@ -22,7 +22,7 @@
  */
 
 package monologue;
-import monologue.MonologueTree.MonologueCondition;
+import monologue.Tree.Condition;
 import monologue.Monologue;
 using monologue.DynamicHelper;
 
@@ -30,7 +30,7 @@ using monologue.DynamicHelper;
  * ...
  * @author 
  */
-@:allow(com.leveluplabs.tdrpg.monologue)
+@:allow(monologue)
 class MonologueVariable
 {
 	public var ID(default,null):Int;
@@ -65,7 +65,7 @@ class MonologueVariable
 		}
 	}
 	
-	public function test(value:Dynamic, condition:MonologueCondition):Bool
+	public function test(value:Dynamic, condition:Condition):Bool
 	{
 		return switch(type)
 		{

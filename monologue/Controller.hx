@@ -22,13 +22,12 @@
  */
 
 package monologue;
-import com.leveluplabs.tdrpg.monologue.MonologueController.MonologueControllerState;
-import monologue.MonologueTree.MonologueCondition;
-import monologue.MonologueTree.MonologueTreeNode;
-import monologue.MonologueTree.MonologueTreeNodeBranch;
-import monologue.MonologueTree.MonologueTreeNodeSet;
-import monologue.MonologueTree.MonologueTreeNodeText;
-import monologue.MonologueTree.MonologueTreeNodeType;
+import monologue.Tree.Condition;
+import monologue.Tree.TreeNode;
+import monologue.Tree.TreeNodeBranch;
+import monologue.Tree.TreeNodeSet;
+import monologue.Tree.TreeNodeText;
+import monologue.Tree.TreeNodeType;
 import de.polygonal.ds.Map;
 import haxe.Json;
 import monologue.IMonologueHost;
@@ -38,52 +37,19 @@ import monologue.Monologue;
  *
  * A Controller object for Monologue trees
  * 
- * Usage:
- ***************
- * 
- * var myData = Json.parse(getTextSomehow("data.mpf"));
- *
- * //you need some external context that implements IMonologueHost and is
- * //responsible for doing the actual dialogue rendering:
- * 
- * var myState = getMyStateSomehow();
- * 
- * //you provide variable values in string-value pairs in a Map, like:
- * //("hasPotion":false,numCoins:3,isBig:true), etc
- * 
- * var myVars = getGameVariablesSomehow();
- * 
- * //then you pass all that stuff in:
- * 
- * var controller = new MonologueController({host:myState, json:myData, variables:myVars});
- * 
- * //then load up a tree and run the first node:
- * 
- * controller.loadTree("tutorial");
- * controller.run();
- * 
- ***************
- * 
- * MonologueController will process nodes until it reaches a text node or
- * custom node, at which point it will return PAUSED and fire a callback to the
- * host to display the node. After the user has clicked "okay" or whatever, it
- * is up to the host to call run() again on the MonologueController to continue
- * to the next node in the sequence. If controller.run() returns TERMINATED,
- * the current tree has reached a terminal state.
- * 
  * @author 
  */
 
-@:allow(com.leveluplabs.tdrpg.monologue)
-class MonologueController
+@:allow(monologue)
+class Controller
 {
-	public var runState(default, null):MonologueControllerState;
+	public var runState(default, null):TreeState;
 	
 	private var host:IMonologueHost;
 	private var monologue:Monologue;
 	
 	private var currentNode:Int =-1;
-	private var currentTree:MonologueTree;
+	private var currentTree:Tree;
 	
 	public function new(params:MonologueParams)
 	{
@@ -124,7 +90,7 @@ class MonologueController
 	 * @return PAUSED: we're at a node that's meant to be displayed, TERMINATED: we've reached the end of the tree, ERROR: we couldn't find the next node or there was some other problem
 	 */
 	
-	public function run():MonologueControllerState
+	public function run():TreeState
 	{
 		if (currentNode == -1) return TERMINATED;
 		
@@ -134,21 +100,21 @@ class MonologueController
 		
 		switch(node.type)
 		{
-			case MonologueTreeNodeType.TEXT: 
+			case TreeNodeType.TEXT: 
 				runTextNode(node);
 				currentNode = node.link;
 				return PAUSED;
 				
-			case MonologueTreeNodeType.BRANCH:
-				var branch:MonologueTreeNodeBranch = cast node;
+			case TreeNodeType.BRANCH:
+				var branch:TreeNodeBranch = cast node;
 				var result = runBranchNode(branch);
 				if (result) 
 					currentNode = branch.trueLink;
 				else
 					currentNode = branch.falseLink;
 				
-			case MonologueTreeNodeType.SET:
-				var setNode:MonologueTreeNodeSet = cast node;
+			case TreeNodeType.SET:
+				var setNode:TreeNodeSet = cast node;
 				runSetNode(setNode);
 				currentNode = node.link;
 				
@@ -163,7 +129,7 @@ class MonologueController
 	
 	/*****PRIVATE********/
 	
-	private function getNode(ID:Int, tree:MonologueTree):MonologueTreeNode
+	private function getNode(ID:Int, tree:Tree):TreeNode
 	{
 		if (ID == -1)
 		{
@@ -188,23 +154,23 @@ class MonologueController
 		}
 	}
 	
-	private function runBranchNode(node:MonologueTreeNodeBranch):Bool
+	private function runBranchNode(node:TreeNodeBranch):Bool
 	{
 		var mVar = monologue.getVariable(node.variable);
 		return mVar.test(node.value, node.condition);
 	}
 	
-	private function runCustomNode(node:MonologueTreeNode):Bool
+	private function runCustomNode(node:TreeNode):Bool
 	{
 		return host.showCustomNode(node);
 	}
 	
-	private function runTextNode(node:MonologueTreeNodeText):Bool
+	private function runTextNode(node:TreeNodeText):Bool
 	{
 		return host.showTextNode(node);
 	}
 	
-	private function runSetNode(node:MonologueTreeNodeSet):Bool
+	private function runSetNode(node:TreeNodeSet):Bool
 	{
 		var mVar = monologue.getVariable(node.variable);
 		if (mVar != null)
@@ -216,7 +182,7 @@ class MonologueController
 	}
 }
 
-enum MonologueControllerState
+enum TreeState
 {
 	PAUSED;
 	TERMINATED;

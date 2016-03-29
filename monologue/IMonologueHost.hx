@@ -22,11 +22,11 @@
  */
 
 package monologue;
-import monologue.MonologueTree.MonologueTreeNode;
-import monologue.MonologueTree.MonologueTreeNodeText;
+import monologue.Tree.TreeNode;
+import monologue.Tree.TreeNodeText;
 
 interface IMonologueHost 
 {
-	public function showTextNode(node:MonologueTreeNodeText):Bool;
-	public function showCustomNode(node:MonologueTreeNode):Bool;
+	public function showTextNode(node:TreeNodeText):Bool;
+	public function showCustomNode(node:TreeNode):Bool;
 }
