@@ -15,9 +15,9 @@ Nothing other than Haxe itself and a valid .mpf file you've created with the Mon
  var myState = getMyStateSomehow();
   
  //you provide variable values in string-value pairs in a Map, like:
- //("hasPotion":false,numCoins:3,isBig:true), etc
+ //("hasPotion":false, numCoins:3, isBig:true), etc
   
- var myVars = getGameVariablesSomehow();
+ var myVars = getVariablesSomehow();
   
  //then you pass all that stuff in:
  
