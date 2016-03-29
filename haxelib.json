@@ -1,0 +1,11 @@
+{
+ "name": "monologue-reader",
+ "url" : "https://github.com/larsiusprime/monologue-reader",
+ "license": "MIT",
+ "tags": ["text","monologue","dialogue","tree","graph"],
+ "description": " A Haxe parser & controller library for Monologue trees",
+ "version": "0.0.0",
+ "releasenote": "",
+ "contributors": ["larsiusprime"],
+ "dependencies": {}
+}
