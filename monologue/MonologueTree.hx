@@ -47,25 +47,25 @@ class MonologueTree
 		var categoryID:Int = json.jsonVar("categoryId", "-1").toInt();
 		var displayName:String = Std.string(json.jsonVar("displayName"));
 		var nodes:Array<MonologueTreeNode> = json.jsonArray("nodes", function(arr:Array<Dynamic>){
-			var nodes:Array<MonologueTreeNode> = [];
+			var ns:Array<MonologueTreeNode> = [];
 			for (entry in arr)
 			{
-				var type = Std.string(json.jsonVar("type")).toTreeNodeType();
+				var type = Std.string(entry.jsonVar("type")).toTreeNodeType();
 				var mNode:MonologueTreeNode = switch(type)
 				{
 					case BRANCH: TreeNodeBranch.fromJSON(entry);
-					case TEXT: TreeNodeBranch.fromJSON(entry);
-					case SET: TreeNodeBranch.fromJSON(entry);
+					case TEXT: TreeNodeText.fromJSON(entry);
+					case SET: TreeNodeSet.fromJSON(entry);
 					default: null;
 				}
 				
 				if (mNode != null)
 				{
 					mNode.locFlag = "$T" + ID + "N" + mNode.ID;
-					nodes.push(mNode);
+					ns.push(mNode);
 				}
 			}
-			return nodes;
+			return ns;
 		});
 		
 		mt.ID = ID;
