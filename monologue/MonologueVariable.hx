@@ -51,54 +51,71 @@ class MonologueVariable
 	
 	public static function fromJSON(json:Dynamic):MonologueVariable
 	{
-		ID = cast readJ(j, "id");
-		displayName = readJ(j, "displayName");
-		origin = readJ(j, "origin");
-		settable = cast readJ(j, "set");
-		gettable = cast readJ(j, "get");
-		type = switch(cast readJ(j, "validation"))
+		var mVar = new MonologueVariable();
+		
+		mVar.ID = json.jsonVar("id").toInt();
+		mVar.displayName = Std.string(json.jsonVar("displayName"));
+		mVar.origin = Std.string(json.jsonVar("origin"));
+		mVar.settable = json.jsonVar("set").toBool();
+		mVar.gettable = json.jsonVar("get").toBool();
+		mVar.type = switch(Std.string(json.jsonVar("validation")))
 		{
 			case "bool": BOOL;
 			case "int": INT;
 			case "float": FLOAT;
 			default: STRING;
 		}
+		
+		return mVar;
 	}
 	
 	public function test(value:Dynamic, condition:Condition):Bool
 	{
 		return switch(type)
 		{
-			case BOOL:   testEquivalent(_bool, value.toBool());
-			case STRING: testEquivalent(_string, Std.string(value));
-			case INT:    testNumeric(_int, value.toInt());
-			case FLOAT:  testNumeric(_float, value.toFloat());
+			case BOOL:   testEquivalent(_bool, value.toBool(), condition);
+			case STRING: testEquivalent(_string, Std.string(value), condition);
+			case INT:    testInt(_int, value.toInt(), condition);
+			case FLOAT:  testFloat(_float, value.toFloat(), condition);
 			default: false;
 		}
 	}
 	
 	@:generic
-	private static function testEquivalent<T>(a:T, b:T, condition:Monologue):Bool
+	private static function testEquivalent<T>(a:T, b:T, condition:Condition):Bool
 	{
 		return switch(condition)
 		{
-			case EQUALS:              a == b;
-			case NOT_EQUALS:          a != b;
+			case EQUAL:              a == b;
+			case NOT_EQUAL:          a != b;
 			default: false;
 		}
 	}
 	
-	@:generic
-	private static function testNumeric<T>(a:T, b:T, condition:Monologue):Bool
+	private static function testInt(a:Int, b:Int, condition:Condition):Bool
 	{
 		return switch(condition)
 		{
-			case EQUALS:              a == b;
-			case NOT_EQUALS:          a != b;
-			case LESS_THAN:           (a < b);
-			case GREATER_THAN:        (a > b);
-			case LESS_THAN_EQUALS:    (a <= b);
-			case GREATER_THAN_EQUALS: (a >= b);
+			case EQUAL:              a == b;
+			case NOT_EQUAL:          a != b;
+			case LESS_THAN:          (a < b);
+			case GREATER_THAN:       (a > b);
+			case LESS_THAN_EQUAL:    (a <= b);
+			case GREATER_THAN_EQUAL: (a >= b);
+			default: false;
+		}
+	}
+	
+	private static function testFloat(a:Float, b:Float, condition:Condition):Bool
+	{
+		return switch(condition)
+		{
+			case EQUAL:              a == b;
+			case NOT_EQUAL:          a != b;
+			case LESS_THAN:          (a < b);
+			case GREATER_THAN:       (a > b);
+			case LESS_THAN_EQUAL:    (a <= b);
+			case GREATER_THAN_EQUAL: (a >= b);
 			default: false;
 		}
 	}

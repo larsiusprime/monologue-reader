@@ -43,9 +43,9 @@ class MonologueTree
 	{
 		var mt = new MonologueTree();
 		
-		var ID:Int = Std.parseInt(json.jsonVar("id","-1"));
-		var categoryID:String = Std.parseInt(json.jsonVar("categoryId", "-1"));
-		var displayName:String = json.jsonVar("displayName");
+		var ID:Int = json.jsonVar("id","-1").toInt();
+		var categoryID:Int = json.jsonVar("categoryId", "-1").toInt();
+		var displayName:String = Std.string(json.jsonVar("displayName"));
 		var nodes:Array<MonologueTreeNode> = json.parseArray("nodes", function(arr:Array<Dynamic>){
 			var nodes:Array<MonologueTreeNode> = [];
 			for (entry in arr)
@@ -66,6 +66,13 @@ class MonologueTree
 			}
 			return nodes;
 		});
+		
+		mt.ID = ID;
+		mt.categoryID = categoryID;
+		mt.displayName = displayName;
+		mt.nodes = nodes;
+		
+		return mt;
 	}
 }
 
@@ -94,6 +101,7 @@ class TreeNodeText extends MonologueTreeNode
 		node.link = json.jsonVar("link", "-1").toInt();
 		node.name = Std.string(json.jsonVar("name"));
 		node.voice = Std.string(json.jsonVar("voice"));
+		return node;
 	}
 }
 
@@ -112,13 +120,14 @@ class TreeNodeBranch extends MonologueTreeNode
 	{
 		var node = new TreeNodeBranch();
 		node.ID = json.jsonVar("id", "-1").toInt();
-		node.type = Std.string(json.jsonVar("type")).toTreeNodeType;
+		node.type = Std.string(json.jsonVar("type")).toTreeNodeType();
 		node.link = json.jsonVar("link", "-1").toInt();
 		node.variable = json.jsonVar("variable","-1").toInt();
 		node.value = json.jsonVar("value","");
-		node.condition = Std.string(json.jsonVar("condition")).toCondition;
+		node.condition = Std.string(json.jsonVar("condition")).toCondition();
 		node.trueLink = json.jsonVar("trueLink", "-1").toInt();
 		node.falseLink = json.jsonVar("falseLink", "-1").toInt();
+		return node;
 	}
 }
 
@@ -138,8 +147,9 @@ class TreeNodeSet extends MonologueTreeNode
 		node.type = Std.string(json.jsonVar("type")).toTreeNodeType();
 		node.link = json.jsonVar("link", "-1").toInt();
 		node.variable = json.jsonVar("variable").toInt();
-		node.operation = Std.string(json.jsonVar("operation")).toOperator;
+		node.operation = Std.string(json.jsonVar("operation")).toOperator();
 		node.value = Std.string(json.jsonVar("value", ""));
+		return node;
 	}
 }
 
@@ -149,6 +159,7 @@ enum TreeNodeType
 	SET;
 	TEXT;
 	CUSTOM;
+	UNKNOWN;
 }
 
 enum Operator

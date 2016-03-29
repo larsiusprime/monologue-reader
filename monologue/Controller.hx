@@ -44,18 +44,18 @@ class Controller
 {
 	public var runState(default, null):TreeState;
 	
-	private var host:IMonologueHost;
-	private var monologue:Monologue;
+	private var host:IMonologueHost = null;
+	private var monologue:Monologue = null;
 	
-	private var currentNode:Int =-1;
-	private var currentTree:MonologueTree;
+	private var currentNode:Int = -1;
+	private var currentTree:MonologueTree = null;
 	
 	public function new(params:MonologueParams)
 	{
 		host = params.host;
 		monologue = Monologue.fromJSON(params.json);
 		
-		initVariables(params.variables);
+		setVariables(params.variables);
 	}
 	
 	/**
@@ -68,16 +68,16 @@ class Controller
 	public function loadTree(tree:String, ?category:String = "", ?variables:Map<String, Dynamic>):Void
 	{
 		var categoryID:Int = monologue.treeCategories.indexOf(category);
-		for (t in trees)
+		for (t in monologue.trees)
 		{
-			if ((t.ID == categoryID || category == "") && t.ID == tree)
+			if ((t.ID == categoryID || category == "") && (t.displayName == tree))
 			{
 				currentTree = t;
 				break;
 			}
 		}
 		
-		currentNode = currentTree.nodes[0];
+		currentNode = currentTree.nodes[0].ID;
 		if (variables != null)
 		{
 			setVariables(variables);
@@ -97,9 +97,9 @@ class Controller
 	public function setVariables(vars:Map<String,Dynamic>):Void
 	{
 		//Initialize the monologue variables with values from the outside
-		for (key in params.variables.keys())
+		for (key in vars.keys())
 		{
-			monologue.setVariable(-1, key, params.variables.get(key));
+			monologue.setVariable(-1, key, vars.get(key));
 		}
 	}
 	
@@ -119,13 +119,13 @@ class Controller
 		switch(node.type)
 		{
 			case TreeNodeType.TEXT: 
-				runTextNode(node);
+				runTextNode(cast node);
 				currentNode = node.link;
 				return PAUSED;
 				
 			case TreeNodeType.BRANCH:
 				var branch:TreeNodeBranch = cast node;
-				var result = runBranchNode(branch);
+				var result:Bool = runBranchNode(branch);
 				if (result) 
 					currentNode = branch.trueLink;
 				else
@@ -149,10 +149,6 @@ class Controller
 	
 	private function getNode(ID:Int, tree:MonologueTree):MonologueTreeNode
 	{
-		if (ID == -1)
-		{
-			return findRootNode(tree);
-		}
 		for (node in tree.nodes)
 		{
 			if (node.ID == ID)
@@ -169,26 +165,24 @@ class Controller
 		return mVar.test(node.value, node.condition);
 	}
 	
-	private function runCustomNode(node:MonologueTreeNode):Bool
+	private function runCustomNode(node:MonologueTreeNode):Void
 	{
-		return host.showCustomNode(node);
+		host.showCustomNode(node);
 	}
 	
-	private function runTextNode(node:TreeNodeText):Bool
+	private function runTextNode(node:TreeNodeText):Void
 	{
-		return host.showTextNode(node);
+		host.showTextNode(node);
 	}
 	
-	private function runSetNode(node:TreeNodeSet):Bool
+	private function runSetNode(node:TreeNodeSet):Void
 	{
 		var mVar = monologue.getVariable(node.variable);
 		if (mVar != null)
 		{
 			mVar.value = node.value;
 			host.onSetVariable(mVar.displayName, mVar.value);
-			return true;
 		}
-		return false;
 	}
 }
 

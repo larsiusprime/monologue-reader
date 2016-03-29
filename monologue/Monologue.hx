@@ -45,17 +45,17 @@ class Monologue
 	{
 		if (Reflect.hasField(json, "project"))
 		{
-			var project = Reflect.field(json, "project");
+			var project:Dynamic = Reflect.field(json, "project");
 			
 			var m:Monologue = new Monologue();
 			
-			m.name = json.readJ("name");
+			m.name = Std.string(project.jsonVar("name"));
 			
-			m.variables = parseVariables(json, "variables");
-			m.customVariables = parseVariables(json, "customVariables");
-			m.voices = parseStrings(json, "voices");
-			m.treeCategories = parseTreeCategories(json);
-			m.languages = parseLanguages(json);
+			m.variables = parseVariables(project, "variables");
+			m.customVariables = parseVariables(project, "customVariables");
+			m.voices = parseStrings(project, "voices");
+			m.treeCategories = parseTreeCategories(project);
+			m.languages = parseLanguages(project);
 			m.trees = parseTrees(json);
 			m.translations = parseTranslations(json);
 		}
@@ -105,8 +105,8 @@ class Monologue
 			var langs = new Map<String,String>();
 			for (lang in arr)
 			{
-				var code:String = cat.readJ("code");
-				var displayName:String = cat.readJ("displayName");
+				var code = Std.string(json.readJ("code"));
+				var displayName = Std.string(json.readJ("displayName"));
 				langs.set(code, displayName);
 			}
 			return langs;
@@ -130,9 +130,10 @@ class Monologue
 	private static function parseStrings(json:Dynamic, fieldName:String):Array<String>
 	{
 		return json.jsonArray(fieldName, function(arr:Array<Dynamic>){
+			var mStrings = [];
 			for (valEntry in arr)
 			{
-				var value:String = valEntry.readJ("displayName");
+				var value:String = Std.string(valEntry.jsonVar("displayName"));
 				if (value != "")
 					mStrings.push(value);
 			}
@@ -154,14 +155,14 @@ class Monologue
 		});
 	}
 	
-	private static function parseTreeCategories(json:Dynamic):Map<Int,String>
+	private static function parseTreeCategories(json:Dynamic):Array<String>
 	{
 		return json.jsonArray("treeCategories", function(arr:Array<Dynamic>){
 			var cats = [];
 			for (cat in arr)
 			{
-				var id:Int = Std.parseInt(cat.readJ("id", "-1"));
-				var displayName:String = cat.readJ("displayName");
+				var id:Int = json.readJ("id", "-1").toInt();
+				var displayName:String = json.readJ("displayName");
 				cats[id] = displayName;
 			}
 			return cats;
@@ -171,9 +172,9 @@ class Monologue
 	private static function parseVariables(json:Dynamic, fieldName:String):Array<MonologueVariable>
 	{
 		return json.jsonArray(fieldName, function(arr:Array<Dynamic>){
+			var mVariables = [];
 			for (varEntry in arr)
 			{
-				var mVariables = [];
 				var mVar = MonologueVariable.fromJSON(varEntry);
 				if (mVar != null)
 					mVariables.push(mVar);
