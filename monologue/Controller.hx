@@ -22,13 +22,12 @@
  */
 
 package monologue;
-import monologue.Tree.Condition;
-import monologue.Tree.TreeNode;
-import monologue.Tree.TreeNodeBranch;
-import monologue.Tree.TreeNodeSet;
-import monologue.Tree.TreeNodeText;
-import monologue.Tree.TreeNodeType;
-import de.polygonal.ds.Map;
+import monologue.MonologueTree.Condition;
+import monologue.MonologueTree.MonologueTreeNode;
+import monologue.MonologueTree.TreeNodeBranch;
+import monologue.MonologueTree.TreeNodeSet;
+import monologue.MonologueTree.TreeNodeText;
+import monologue.MonologueTree.TreeNodeType;
 import haxe.Json;
 import monologue.IMonologueHost;
 import monologue.Monologue;
@@ -49,7 +48,7 @@ class Controller
 	private var monologue:Monologue;
 	
 	private var currentNode:Int =-1;
-	private var currentTree:Tree;
+	private var currentTree:MonologueTree;
 	
 	public function new(params:MonologueParams)
 	{
@@ -81,7 +80,26 @@ class Controller
 		currentNode = currentTree.nodes[0];
 		if (variables != null)
 		{
-			initVariables(variables);
+			setVariables(variables);
+		}
+	}
+	
+	public function getVariable(name:String):Dynamic
+	{
+		return monologue.getVariable( -1, name);
+	}
+	
+	public function setVariable(name:String, value:Dynamic):Void
+	{
+		monologue.setVariable(-1, name, value);
+	}
+	
+	public function setVariables(vars:Map<String,Dynamic>):Void
+	{
+		//Initialize the monologue variables with values from the outside
+		for (key in params.variables.keys())
+		{
+			monologue.setVariable(-1, key, params.variables.get(key));
 		}
 	}
 	
@@ -129,7 +147,7 @@ class Controller
 	
 	/*****PRIVATE********/
 	
-	private function getNode(ID:Int, tree:Tree):TreeNode
+	private function getNode(ID:Int, tree:MonologueTree):MonologueTreeNode
 	{
 		if (ID == -1)
 		{
@@ -145,22 +163,13 @@ class Controller
 		return null;
 	}
 	
-	private function initVariables(vars:Map<String,Dynamic>):Void
-	{
-		//Initialize the monologue variables with values from the outside
-		for (key in params.variables.keys())
-		{
-			monologue.setVariable(-1, key, params.variables.get(key));
-		}
-	}
-	
 	private function runBranchNode(node:TreeNodeBranch):Bool
 	{
 		var mVar = monologue.getVariable(node.variable);
 		return mVar.test(node.value, node.condition);
 	}
 	
-	private function runCustomNode(node:TreeNode):Bool
+	private function runCustomNode(node:MonologueTreeNode):Bool
 	{
 		return host.showCustomNode(node);
 	}
@@ -176,6 +185,7 @@ class Controller
 		if (mVar != null)
 		{
 			mVar.value = node.value;
+			host.onSetVariable(mVar.displayName, mVar.value);
 			return true;
 		}
 		return false;

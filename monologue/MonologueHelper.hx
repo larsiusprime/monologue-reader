@@ -22,9 +22,9 @@
  */
 
 package monologue;
-import monologue.Tree.Condition;
-import monologue.Tree.Operator;
-import monologue.Tree.TreeNodeType;
+import monologue.MonologueTree.Condition;
+import monologue.MonologueTree.Operator;
+import monologue.MonologueTree.TreeNodeType;
 
 /**
  * ...

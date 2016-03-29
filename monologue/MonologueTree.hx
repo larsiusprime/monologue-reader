@@ -30,28 +30,28 @@ using monologue.MonologueHelper;
  * @author 
  */
 @:allow(monologue)
-class Tree
+class MonologueTree
 {
 	public var ID(default, null):Int;
-	public var categoryID:Int,
-	public var displayName:String,
-	public var nodes:Array<TreeNode>;
+	public var categoryID:Int;
+	public var displayName:String;
+	public var nodes:Array<MonologueTreeNode>;
 	
 	public function new(){}
 	
-	public static function fromJSON(json:Dynamic):Tree
+	public static function fromJSON(json:Dynamic):MonologueTree
 	{
-		var mt = new Tree();
+		var mt = new MonologueTree();
 		
 		var ID:Int = Std.parseInt(json.jsonVar("id","-1"));
 		var categoryID:String = Std.parseInt(json.jsonVar("categoryId", "-1"));
 		var displayName:String = json.jsonVar("displayName");
-		var nodes:Array<TreeNode> = json.parseArray("nodes", function(arr:Array<Dynamic>){
-			var nodes:Array<TreeNode> = [];
+		var nodes:Array<MonologueTreeNode> = json.parseArray("nodes", function(arr:Array<Dynamic>){
+			var nodes:Array<MonologueTreeNode> = [];
 			for (entry in arr)
 			{
 				var type = Std.string(json.jsonVar("type")).toTreeNodeType();
-				var mNode:TreeNode = switch(type)
+				var mNode:MonologueTreeNode = switch(type)
 				{
 					case BRANCH: TreeNodeBranch.fromJSON(entry);
 					case TEXT: TreeNodeBranch.fromJSON(entry);
@@ -70,7 +70,7 @@ class Tree
 }
 
 @:allow(monologue)
-class TreeNode
+class MonologueTreeNode
 {
 	public var ID(default, null):Int=-1;
 	public var type(default, null):TreeNodeType;
@@ -79,14 +79,14 @@ class TreeNode
 }
 
 @:allow(monologue)
-class TreeNodeText extends TreeNode
+class TreeNodeText extends MonologueTreeNode
 {
 	public var name(default, null):String="";
 	public var voice(default, null):String = "";
 	
 	public function new(){}
 	
-	public static function fromJSON(json:Dynamic):TreeNode
+	public static function fromJSON(json:Dynamic):MonologueTreeNode
 	{
 		var node = new TreeNodeText();
 		node.ID = json.jsonVar("id", "-1").toInt();
@@ -98,7 +98,7 @@ class TreeNodeText extends TreeNode
 }
 
 @:allow(monologue)
-class TreeNodeBranch extends TreeNode
+class TreeNodeBranch extends MonologueTreeNode
 {
 	public var variable(default, null):Int = -1;
 	public var value(default, null):Dynamic = null;
@@ -108,7 +108,7 @@ class TreeNodeBranch extends TreeNode
 	
 	public function new(){}
 	
-	public static function fromJSON(json:Dynamic):TreeNode
+	public static function fromJSON(json:Dynamic):MonologueTreeNode
 	{
 		var node = new TreeNodeBranch();
 		node.ID = json.jsonVar("id", "-1").toInt();
@@ -123,7 +123,7 @@ class TreeNodeBranch extends TreeNode
 }
 
 @:allow(monologue)
-class TreeNodeSet extends TreeNode
+class TreeNodeSet extends MonologueTreeNode
 {
 	public var variable(default, null):Int = -1;
 	public var operation(default, null):Operator=UNKNOWN;
@@ -131,7 +131,7 @@ class TreeNodeSet extends TreeNode
 	
 	public function new(){}
 	
-	public static function fromJSON(json:Dynamic):TreeNode
+	public static function fromJSON(json:Dynamic):MonologueTreeNode
 	{
 		var node = new TreeNodeSet();
 		node.ID = json.jsonVar("id", "-1").toInt();

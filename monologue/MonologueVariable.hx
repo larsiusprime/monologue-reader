@@ -22,7 +22,7 @@
  */
 
 package monologue;
-import monologue.Tree.Condition;
+import monologue.MonologueTree.Condition;
 import monologue.Monologue;
 using monologue.DynamicHelper;
 
@@ -99,7 +99,7 @@ class MonologueVariable
 			case GREATER_THAN:        (a > b);
 			case LESS_THAN_EQUALS:    (a <= b);
 			case GREATER_THAN_EQUALS: (a >= b);
-			default: false;case EQUALS
+			default: false;
 		}
 	}
 	

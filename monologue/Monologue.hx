@@ -22,9 +22,9 @@
  */
 
 package monologue;
-import monologue.Tree.Condition;
-import monologue.Tree.Operator;
-import monologue.Tree.TreeNodeType;
+import monologue.MonologueTree.Condition;
+import monologue.MonologueTree.Operator;
+import monologue.MonologueTree.TreeNodeType;
 using monologue.DynamicHelper;
 
 @:allow(monologue)
@@ -36,7 +36,7 @@ class Monologue
 	private var voices:Array<String>;
 	private var treeCategories:Array<String>;
 	private var languages:Map<String,String>;
-	private var trees:Array<Tree>;
+	private var trees:Array<MonologueTree>;
 	private var translations:Array<Translation>;
 	
 	public function new(){}
@@ -140,13 +140,13 @@ class Monologue
 		});
 	}
 	
-	private static function parseTrees(json:Dynamic):Array<Tree>
+	private static function parseTrees(json:Dynamic):Array<MonologueTree>
 	{
 		return parseArray(json, "trees", function(arr:Array<Dynamic>){
 			var trees = [];
 			for (entry in arr)
 			{
-				var tree:Tree = Tree.fromJSON(entry);
+				var tree:MonologueTree = MonologueTree.fromJSON(entry);
 				if (tree != null)
 					trees.push(tree);
 			}

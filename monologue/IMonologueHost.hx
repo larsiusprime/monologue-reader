@@ -22,11 +22,27 @@
  */
 
 package monologue;
-import monologue.Tree.TreeNode;
-import monologue.Tree.TreeNodeText;
+import monologue.MonologueTree.MonologueTreeNode;
+import monologue.MonologueTree.TreeNodeText;
 
 interface IMonologueHost 
 {
-	public function showTextNode(node:TreeNodeText):Bool;
-	public function showCustomNode(node:TreeNode):Bool;
+	/**
+	 * Implement this to display a text node in your application somehow
+	 * @param	node
+	 */
+	public function showTextNode(node:TreeNodeText):Void;
+	
+	/**
+	 * Implement this to display a custom node in your application somehow
+	 * @param	node
+	 */
+	public function showCustomNode(node:MonologueTreeNode):Void;
+	
+	/**
+	 * Notifies your application that a monologue node has changed a variable value
+	 * @param	name
+	 * @param	value
+	 */
+	public function onSetVariable(name:String, value:Dynamic):Void;
 }
