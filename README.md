@@ -1,7 +1,10 @@
 # monologue-reader
 A Haxe parser &amp; controller library for the [Monologue editor](https://github.com/nospoone/monologue).
 
-Usage:
+###Dependencies:
+Nothing other than Haxe itself and a valid .mpf file you've created with the Monologue editor (technically you could also create it by hand or with another editor, as long as the format is valid).
+
+###Usage:
  
  ```haxe 
  var myData = Json.parse(getTextSomehow("data.mpf"));
