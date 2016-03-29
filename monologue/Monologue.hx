@@ -58,6 +58,8 @@ class Monologue
 			m.languages = parseLanguages(project);
 			m.trees = parseTrees(json);
 			m.translations = parseTranslations(json);
+			
+			return m;
 		}
 		return null;
 	}
@@ -105,8 +107,8 @@ class Monologue
 			var langs = new Map<String,String>();
 			for (lang in arr)
 			{
-				var code = Std.string(json.readJ("code"));
-				var displayName = Std.string(json.readJ("displayName"));
+				var code = Std.string(json.jsonVar("code"));
+				var displayName = Std.string(json.jsonVar("displayName"));
 				langs.set(code, displayName);
 			}
 			return langs;
@@ -161,8 +163,8 @@ class Monologue
 			var cats = [];
 			for (cat in arr)
 			{
-				var id:Int = json.readJ("id", "-1").toInt();
-				var displayName:String = json.readJ("displayName");
+				var id:Int = json.jsonVar("id", "-1").toInt();
+				var displayName:String = json.jsonVar("displayName");
 				cats[id] = displayName;
 			}
 			return cats;

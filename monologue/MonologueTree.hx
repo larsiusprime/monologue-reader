@@ -46,7 +46,7 @@ class MonologueTree
 		var ID:Int = json.jsonVar("id","-1").toInt();
 		var categoryID:Int = json.jsonVar("categoryId", "-1").toInt();
 		var displayName:String = Std.string(json.jsonVar("displayName"));
-		var nodes:Array<MonologueTreeNode> = json.parseArray("nodes", function(arr:Array<Dynamic>){
+		var nodes:Array<MonologueTreeNode> = json.jsonArray("nodes", function(arr:Array<Dynamic>){
 			var nodes:Array<MonologueTreeNode> = [];
 			for (entry in arr)
 			{
@@ -59,10 +59,11 @@ class MonologueTree
 					default: null;
 				}
 				
-				mNode.locFlag = "$T" + ID + "N" + mNode.ID;
-				
 				if (mNode != null)
+				{
+					mNode.locFlag = "$T" + ID + "N" + mNode.ID;
 					nodes.push(mNode);
+				}
 			}
 			return nodes;
 		});
