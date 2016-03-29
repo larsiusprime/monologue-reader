@@ -101,7 +101,7 @@ class Monologue
 	
 	private static function parseLanguages(json:Dynamic):Map<String,String>
 	{
-		return parseArray(json, "languages", function(arr:Array<Dynamic>){
+		return json.jsonArray("languages", function(arr:Array<Dynamic>){
 			var langs = new Map<String,String>();
 			for (lang in arr)
 			{
@@ -115,7 +115,7 @@ class Monologue
 	
 	private static function parseTranslations(json:Dynamic):Array<Translation>
 	{
-		return parseArray(json, "translations", function(arr:Array<Dynamic>){
+		return json.jsonArray("translations", function(arr:Array<Dynamic>){
 			var translations = [];
 			for (entry in arr)
 			{
@@ -129,7 +129,7 @@ class Monologue
 	
 	private static function parseStrings(json:Dynamic, fieldName:String):Array<String>
 	{
-		return parseArray(json, fieldName, function(arr:Array<Dynamic>){
+		return json.jsonArray(fieldName, function(arr:Array<Dynamic>){
 			for (valEntry in arr)
 			{
 				var value:String = valEntry.readJ("displayName");
@@ -142,7 +142,7 @@ class Monologue
 	
 	private static function parseTrees(json:Dynamic):Array<MonologueTree>
 	{
-		return parseArray(json, "trees", function(arr:Array<Dynamic>){
+		return json.jsonArray("trees", function(arr:Array<Dynamic>){
 			var trees = [];
 			for (entry in arr)
 			{
@@ -156,7 +156,7 @@ class Monologue
 	
 	private static function parseTreeCategories(json:Dynamic):Map<Int,String>
 	{
-		return parseArray(json, "treeCategories", function(arr:Array<Dynamic>){
+		return json.jsonArray("treeCategories", function(arr:Array<Dynamic>){
 			var cats = [];
 			for (cat in arr)
 			{
@@ -170,7 +170,7 @@ class Monologue
 	
 	private static function parseVariables(json:Dynamic, fieldName:String):Array<MonologueVariable>
 	{
-		return parseArray(json, fieldName, function(arr:Array<Dynamic>){
+		return json.jsonArray(fieldName, function(arr:Array<Dynamic>){
 			for (varEntry in arr)
 			{
 				var mVariables = [];

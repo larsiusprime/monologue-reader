@@ -137,19 +137,20 @@ class DynamicHelper
 	
 	public static function toFloat(val:Dynamic):Float
 	{
+		var f:Float = 0.0;
 		if (val == null)
-			_float = 0.0;
+			f = 0.0;
 		else if (Std.is(val, Int))
 		{
 			var i:Int = cast val;
-			_float = i;
+			f = i;
 		}
 		else if (Std.is(val, Float))
-			_float = cast(val, Float);
+			f = cast(val, Float);
 		else if (Std.is(val, Bool))
-			_float = (cast(val, Bool) == true) ? 1.0 : 0.0;
+			f = (cast(val, Bool) == true) ? 1.0 : 0.0;
 		else if (Std.is(val, String))
-			_float = Std.parseFloat(cast(val, String));
-		return _float;
+			f = Std.parseFloat(cast(val, String));
+		return f;
 	}
 }
