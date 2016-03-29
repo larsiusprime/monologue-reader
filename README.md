@@ -29,4 +29,7 @@ Nothing other than Haxe itself and a valid .mpf file you've created with the Mon
  controller.run();
  ```
  
- MonologueController will process nodes until it reaches a text node or custom node, at which point it will return ```PAUSED``` and fire a callback to the host to display the node. After the user has clicked "okay" or whatever, it is up to the host to call run() again on the MonologueController to continue to the next node in the sequence. If ```controller.run()``` returns ```TERMINATED```, the current tree has reached a terminal state.
+ MonologueController will process nodes until it reaches a text node or custom node, at which point it will return ```PAUSED``` and fire a callback to the host to display the node. After the user has clicked "okay" or whatever, it is up to the host to call ```run()``` again on the MonologueController to continue to the next node in the sequence. If ```controller.run()``` returns ```TERMINATED```, the current tree has reached a terminal state.
+
+##NOTE: 
+This is super new and probably has lots of bugs!
