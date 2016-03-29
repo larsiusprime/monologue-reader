@@ -1,5 +1,5 @@
 # monologue-reader
-A Haxe parser &amp; controller library for the Monologue editor
+A Haxe parser &amp; controller library for the [Monologue editor](https://github.com/nospoone/monologue).
 
 Usage:
  
