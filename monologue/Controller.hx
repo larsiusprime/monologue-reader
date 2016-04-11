@@ -180,8 +180,15 @@ class Controller
 		var mVar = monologue.getVariable(node.variable);
 		if (mVar != null)
 		{
-			mVar.value = node.value;
-			host.onSetVariable(mVar.displayName, mVar.value);
+			if (mVar.settable) 
+			{
+				mVar.value = node.value;
+				host.onSetVariable(VariableState.SUCCESS, mVar.displayName, mVar.value);
+			} 
+			else
+			{
+				host.onSetVariable(VariableState.ERROR_UNSETTABLE, mVar.displayName, mVar.value);
+			}
 		}
 	}
 }
@@ -191,6 +198,13 @@ enum TreeState
 	PAUSED;
 	TERMINATED;
 	ERROR;
+}
+
+enum VariableState
+{
+	SUCCESS;
+	ERROR_UNSETTABLE;
+	ERROR_UNGETTABLE;
 }
 
 typedef MonologueParams = {
