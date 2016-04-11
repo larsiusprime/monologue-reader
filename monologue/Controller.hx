@@ -180,7 +180,8 @@ class Controller
 		var mVar = monologue.getVariable(node.variable);
 		if (mVar != null)
 		{
-			if (mVar.settable) {
+			if (mVar.settable) 
+			{
 				mVar.value = node.value;
 				host.onSetVariable(VariableState.SUCCESS, mVar.displayName, mVar.value);
 			} else {
