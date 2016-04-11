@@ -184,7 +184,8 @@ class Controller
 			{
 				mVar.value = node.value;
 				host.onSetVariable(VariableState.SUCCESS, mVar.displayName, mVar.value);
-			} else {
+			} else 
+			{
 				host.onSetVariable(VariableState.ERROR_UNSETTABLE, mVar.displayName, mVar.value);
 			}
 		}
