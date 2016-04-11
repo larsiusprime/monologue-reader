@@ -22,6 +22,7 @@
  */
 
 package monologue;
+import monologue.Controller.VariableState;
 import monologue.MonologueTree.MonologueTreeNode;
 import monologue.MonologueTree.TreeNodeText;
 
@@ -44,5 +45,5 @@ interface IMonologueHost
 	 * @param	name
 	 * @param	value
 	 */
-	public function onSetVariable(name:String, value:Dynamic):Void;
+	public function onSetVariable(status:VariableState, name:String, value:Dynamic):Void;
 }

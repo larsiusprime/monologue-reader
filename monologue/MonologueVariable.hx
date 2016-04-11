@@ -121,9 +121,7 @@ class MonologueVariable
 	}
 	
 	private function get_value():Dynamic
-	{
-		if (!gettable) return null;
-		
+	{		
 		return switch(type)
 		{
 			case BOOL: _bool;
@@ -134,9 +132,7 @@ class MonologueVariable
 	}
 	
 	private function set_value(val:Dynamic):Dynamic
-	{
-		if (!settable) return null;
-		
+	{		
 		switch(type)
 		{
 			case BOOL:
