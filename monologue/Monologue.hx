@@ -25,6 +25,7 @@ package monologue;
 import monologue.MonologueTree.Condition;
 import monologue.MonologueTree.Operator;
 import monologue.MonologueTree.TreeNodeType;
+import monologue.MonologueVariable.MonologueVariableType;
 using monologue.DynamicHelper;
 
 @:allow(monologue)
@@ -97,6 +98,35 @@ class Monologue
 		if (mVar != null)
 		{
 			mVar.value = value;
+		}
+		else
+		{
+			mVar = new MonologueVariable();
+			
+			     if (Std.is(value, Bool  )) mVar.type = MonologueVariableType.BOOL;
+			else if (Std.is(value, Int   )) mVar.type = MonologueVariableType.INT;
+			else if (Std.is(value, Float )) mVar.type = MonologueVariableType.FLOAT;
+			else if (Std.is(value, String)) mVar.type = MonologueVariableType.STRING;
+			else return;
+			
+			var newID:Int = byID;
+			
+			if (newID < 0)
+			{
+				for (custom in customVariables)
+				{
+					if (custom.ID > newID)
+					{
+						newID = custom.ID;
+					}
+				}
+			}
+			
+			mVar.ID = newID + 1;
+			mVar.displayName = byName;
+			mVar.value = value;
+			
+			customVariables.push(mVar);
 		}
 	}
 	/********PRIVATE**********/

@@ -86,7 +86,9 @@ class Controller
 	
 	public function getVariable(name:String):Dynamic
 	{
-		return monologue.getVariable( -1, name);
+		var mVar = monologue.getVariable( -1, name);
+		if (mVar != null) return mVar.value;
+		return null;
 	}
 	
 	public function setVariable(name:String, value:Dynamic):Void
