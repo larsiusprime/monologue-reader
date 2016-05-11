@@ -31,6 +31,7 @@ import monologue.MonologueTree.TreeNodeType;
 import haxe.Json;
 import monologue.IMonologueHost;
 import monologue.Monologue;
+import monologue.MonologueBranch;
 
  /**
  *
@@ -127,11 +128,7 @@ class Controller
 				
 			case TreeNodeType.BRANCH:
 				var branch:TreeNodeBranch = cast node;
-				var result:Bool = runBranchNode(branch);
-				if (result) 
-					currentNode = branch.trueLink;
-				else
-					currentNode = branch.falseLink;
+				currentNode = runBranchNode(branch);
 				
 			case TreeNodeType.SET:
 				var setNode:TreeNodeSet = cast node;
@@ -160,11 +157,17 @@ class Controller
 		}
 		return null;
 	}
-	
-	private function runBranchNode(node:TreeNodeBranch):Bool
-	{
-		var mVar = monologue.getVariable(node.variable);
-		return mVar.test(node.value, node.condition);
+
+	private function runBranchNode(node:TreeNodeBranch):Int
+	{		
+		for (cond in node.conditions) {
+			var mVar = monologue.getVariable(cond.variable);
+			if (mVar.test(cond.value, cond.condition)) {
+				return cond.link;
+			}
+		}
+		
+		return node.link;
 	}
 	
 	private function runCustomNode(node:MonologueTreeNode):Void

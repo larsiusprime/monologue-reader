@@ -127,7 +127,7 @@ class MonologueTreeNode
 @:allow(monologue)
 class TreeNodeNormal extends MonologueTreeNode 
 {
-	public function new(){}
+	public function new() {}
 	
 	public static function fromJSON(json:Dynamic):MonologueTreeNode
 	{
@@ -142,26 +142,16 @@ class TreeNodeNormal extends MonologueTreeNode
 
 @:allow(monologue)
 class TreeNodeBranch extends MonologueTreeNode
-{
-	public var variable(default, null):Int = -1;
-	public var value(default, null):Dynamic = null;
-	public var condition(default, null):Condition=UNKNOWN;
-	public var trueLink(default, null):Int=-1;
-	public var falseLink(default, null):Int =-1;
-	
-	public function new(){}
+{	
+	public function new() {}
 	
 	public static function fromJSON(json:Dynamic):MonologueTreeNode
 	{
 		var node = new TreeNodeBranch();
 		node.ID = json.jsonVar("id", "-1").toInt();
-		node.type = Std.string(json.jsonVar("type")).toTreeNodeType();
-		node.link = json.jsonVar("link", "-1").toInt();
-		node.variable = json.jsonVar("variable","-1").toInt();
-		node.value = json.jsonVar("value","");
-		node.condition = Std.string(json.jsonVar("condition")).toCondition();
-		node.trueLink = json.jsonVar("trueLink", "-1").toInt();
-		node.falseLink = json.jsonVar("falseLink", "-1").toInt();
+		node.type = Std.string(json.jsonVar("nodetype")).toTreeNodeType();
+		node.parseElements(json);
+		node.parseConditions(json);
 		return node;
 	}
 }
