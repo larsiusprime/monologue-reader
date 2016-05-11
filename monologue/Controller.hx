@@ -160,9 +160,11 @@ class Controller
 
 	private function runBranchNode(node:TreeNodeBranch):Int
 	{		
-		for (cond in node.conditions) {
+		for (cond in node.conditions) 
+		{
 			var mVar = monologue.getVariable(cond.variable);
-			if (mVar.test(cond.value, cond.condition)) {
+			if (mVar.test(cond.value, cond.condition)) 
+			{
 				return cond.link;
 			}
 		}
