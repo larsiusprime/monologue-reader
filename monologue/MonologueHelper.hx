@@ -52,7 +52,7 @@ class MonologueHelper
 		return switch(str.toLowerCase())
 		{
 			case "branch": BRANCH;
-			case "text": TEXT;
+			case "normal": NORMAL;
 			case "set": SET;
 			default: UNKNOWN;
 		}

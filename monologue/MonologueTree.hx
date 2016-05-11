@@ -22,6 +22,7 @@
  */
 
 package monologue;
+import monologue.MonologueTree.TreeNodeNormal;
 using monologue.DynamicHelper;
 using monologue.MonologueHelper;
 
@@ -50,11 +51,11 @@ class MonologueTree
 			var ns:Array<MonologueTreeNode> = [];
 			for (entry in arr)
 			{
-				var type = Std.string(entry.jsonVar("type")).toTreeNodeType();
+				var type = Std.string(entry.jsonVar("nodetype")).toTreeNodeType();
 				var mNode:MonologueTreeNode = switch(type)
 				{
+					case NORMAL: TreeNodeNormal.fromJSON(entry);
 					case BRANCH: TreeNodeBranch.fromJSON(entry);
-					case TEXT: TreeNodeText.fromJSON(entry);
 					case SET: TreeNodeSet.fromJSON(entry);
 					default: null;
 				}
@@ -82,8 +83,52 @@ class MonologueTreeNode
 {
 	public var ID(default, null):Int=-1;
 	public var type(default, null):TreeNodeType;
+	public var locFlag(default, null):String = "";
+	
 	public var link(default, null):Int =-1;
-	public var locFlag(default, null):String="";
+	public var conditions(default, null):Array<MonologueBranch> = new Array<MonologueBranch>();
+	public var elements(default, null):Map<String, String> = new Map<String, String>();
+}
+
+@:allow(monologue)
+class TreeNodeNormal extends MonologueTreeNode 
+{
+	public function new(){}
+	
+	public static function fromJSON(json:Dynamic):MonologueTreeNode
+	{
+		var node = new TreeNodeNormal();
+		
+		node.ID = json.jsonVar("id", "-1").toInt();
+		node.type = Std.string(json.jsonVar("nodetype")).toTreeNodeType();
+		
+		if (Reflect.hasField(json, 'elements'))
+		{
+			var els = Reflect.field(json, 'elements');
+			for (elementName in Reflect.fields(els)) {
+				node.elements.set(elementName, Reflect.field(els, elementName));
+			}
+		}
+		
+		if (Reflect.hasField(json, 'conditions'))
+		{
+			json.jsonArray('conditions', function (conditions:Array<Dynamic>):Dynamic {
+				for (condition in conditions) {
+					if (condition != null) {
+						if (Reflect.hasField(condition, 'variable')) {
+							node.conditions.push(MonologueBranch.fromJSON(condition));
+						} else {
+							node.link = Reflect.field(condition, 'link');
+						}
+					}
+				}
+				
+				return conditions;
+			});
+		}
+		
+		return node;
+	}
 }
 
 @:allow(monologue)
@@ -158,7 +203,7 @@ enum TreeNodeType
 {
 	BRANCH;
 	SET;
-	TEXT;
+	NORMAL;
 	CUSTOM;
 	UNKNOWN;
 }

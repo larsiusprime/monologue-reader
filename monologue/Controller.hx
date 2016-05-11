@@ -66,7 +66,7 @@ class Controller
 	 */
 	
 	public function loadTree(tree:String, ?category:String = "", ?variables:Map<String, Dynamic>):Void
-	{
+	{		
 		var categoryID:Int = monologue.treeCategories.indexOf(category);
 		for (t in monologue.trees)
 		{
@@ -120,7 +120,7 @@ class Controller
 		
 		switch(node.type)
 		{
-			case TreeNodeType.TEXT: 
+			case TreeNodeType.NORMAL: 
 				runTextNode(cast node);
 				currentNode = node.link;
 				return PAUSED;
