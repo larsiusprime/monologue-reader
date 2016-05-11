@@ -62,7 +62,8 @@ class MonologueTree
 				
 				if (mNode != null)
 				{
-					mNode.locFlag = "$T" + ID + "N" + mNode.ID;
+					
+					
 					ns.push(mNode);
 				}
 			}
@@ -83,7 +84,6 @@ class MonologueTreeNode
 {
 	public var ID(default, null):Int=-1;
 	public var type(default, null):TreeNodeType;
-	public var locFlag(default, null):String = "";
 	
 	public var link(default, null):Int =-1;
 	public var conditions(default, null):Array<MonologueBranch> = new Array<MonologueBranch>();
@@ -131,6 +131,7 @@ class TreeNodeNormal extends MonologueTreeNode
 	}
 }
 
+// depecrated - moved to treenodenormal
 @:allow(monologue)
 class TreeNodeText extends MonologueTreeNode
 {
