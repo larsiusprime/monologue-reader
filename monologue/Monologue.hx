@@ -33,8 +33,6 @@ class Monologue
 {
 	private var name(default, null):String;
 	private var variables:Array<MonologueVariable>;
-	private var customVariables:Array<MonologueVariable>;
-	private var voices:Array<String>;
 	private var treeCategories:Array<String>;
 	private var languages:Map<String,String>;
 	private var trees:Array<MonologueTree>;
@@ -53,8 +51,6 @@ class Monologue
 			m.name = Std.string(project.jsonVar("name"));
 			
 			m.variables = parseVariables(project, "variables");
-			m.customVariables = parseVariables(project, "customVariables");
-			m.voices = parseStrings(project, "voices");
 			m.treeCategories = parseTreeCategories(project);
 			m.languages = parseLanguages(project);
 			m.trees = parseTrees(json);
@@ -68,17 +64,6 @@ class Monologue
 	public function getVariable(byID:Int=-1, byName:String=""):MonologueVariable
 	{
 		for (mVar in variables)
-		{
-			if (byID != -1 && mVar.ID == byID)
-			{
-				return mVar;
-			}
-			if (byName != "" && mVar.displayName == byName)
-			{
-				return mVar;
-			}
-		}
-		for (mVar in customVariables)
 		{
 			if (byID != -1 && mVar.ID == byID)
 			{
@@ -113,7 +98,7 @@ class Monologue
 			
 			if (newID < 0)
 			{
-				for (custom in customVariables)
+				for (custom in variables)
 				{
 					if (custom.ID > newID)
 					{
@@ -126,7 +111,7 @@ class Monologue
 			mVar.displayName = byName;
 			mVar.value = value;
 			
-			customVariables.push(mVar);
+			variables.push(mVar);
 		}
 	}
 	/********PRIVATE**********/

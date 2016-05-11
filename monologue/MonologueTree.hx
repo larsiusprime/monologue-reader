@@ -62,8 +62,6 @@ class MonologueTree
 				
 				if (mNode != null)
 				{
-					
-					
 					ns.push(mNode);
 				}
 			}
@@ -84,10 +82,46 @@ class MonologueTreeNode
 {
 	public var ID(default, null):Int=-1;
 	public var type(default, null):TreeNodeType;
-	
 	public var link(default, null):Int =-1;
 	public var conditions(default, null):Array<MonologueBranch> = new Array<MonologueBranch>();
 	public var elements(default, null):Map<String, String> = new Map<String, String>();
+	
+	public function parseElements(json:Dynamic):Void 
+	{
+		if (Reflect.hasField(json, 'elements'))
+		{
+			var els = Reflect.field(json, 'elements');
+			for (elementName in Reflect.fields(els)) 
+			{
+				elements.set(elementName, Reflect.field(els, elementName));
+			}
+		}
+	}
+	
+	public function parseConditions(json:Dynamic):Void 
+	{
+		if (Reflect.hasField(json, 'conditions'))
+		{
+			json.jsonArray('conditions', function (conditionsData:Array<Dynamic>):Dynamic {
+				for (condition in conditionsData)
+				{
+					if (condition != null) 
+					{
+						if (Reflect.hasField(condition, 'variable')) 
+						{
+							conditions.push(MonologueBranch.fromJSON(condition));
+						} 
+						else
+						{
+							link = Reflect.field(condition, 'link');
+						}
+					}
+				}
+				
+				return conditionsData;
+			});
+		}
+	}
 }
 
 @:allow(monologue)
@@ -98,56 +132,10 @@ class TreeNodeNormal extends MonologueTreeNode
 	public static function fromJSON(json:Dynamic):MonologueTreeNode
 	{
 		var node = new TreeNodeNormal();
-		
 		node.ID = json.jsonVar("id", "-1").toInt();
 		node.type = Std.string(json.jsonVar("nodetype")).toTreeNodeType();
-		
-		if (Reflect.hasField(json, 'elements'))
-		{
-			var els = Reflect.field(json, 'elements');
-			for (elementName in Reflect.fields(els)) {
-				node.elements.set(elementName, Reflect.field(els, elementName));
-			}
-		}
-		
-		if (Reflect.hasField(json, 'conditions'))
-		{
-			json.jsonArray('conditions', function (conditions:Array<Dynamic>):Dynamic {
-				for (condition in conditions) {
-					if (condition != null) {
-						if (Reflect.hasField(condition, 'variable')) {
-							node.conditions.push(MonologueBranch.fromJSON(condition));
-						} else {
-							node.link = Reflect.field(condition, 'link');
-						}
-					}
-				}
-				
-				return conditions;
-			});
-		}
-		
-		return node;
-	}
-}
-
-// depecrated - moved to treenodenormal
-@:allow(monologue)
-class TreeNodeText extends MonologueTreeNode
-{
-	public var name(default, null):String="";
-	public var voice(default, null):String = "";
-	
-	public function new(){}
-	
-	public static function fromJSON(json:Dynamic):MonologueTreeNode
-	{
-		var node = new TreeNodeText();
-		node.ID = json.jsonVar("id", "-1").toInt();
-		node.type = Std.string(json.jsonVar("type")).toTreeNodeType();
-		node.link = json.jsonVar("link", "-1").toInt();
-		node.name = Std.string(json.jsonVar("name"));
-		node.voice = Std.string(json.jsonVar("voice"));
+		node.parseElements(json);
+		node.parseConditions(json);
 		return node;
 	}
 }
@@ -182,7 +170,7 @@ class TreeNodeBranch extends MonologueTreeNode
 class TreeNodeSet extends MonologueTreeNode
 {
 	public var variable(default, null):Int = -1;
-	public var operation(default, null):Operator=UNKNOWN;
+	public var operation(default, null):Operator = UNKNOWN;
 	public var value(default, null):String = "";
 	
 	public function new(){}
@@ -191,11 +179,18 @@ class TreeNodeSet extends MonologueTreeNode
 	{
 		var node = new TreeNodeSet();
 		node.ID = json.jsonVar("id", "-1").toInt();
-		node.type = Std.string(json.jsonVar("type")).toTreeNodeType();
-		node.link = json.jsonVar("link", "-1").toInt();
-		node.variable = json.jsonVar("variable").toInt();
-		node.operation = Std.string(json.jsonVar("operation")).toOperator();
-		node.value = Std.string(json.jsonVar("value", ""));
+		node.type = Std.string(json.jsonVar("nodetype")).toTreeNodeType();
+		node.parseElements(json);
+		node.parseConditions(json);
+		
+		if (Reflect.hasField(json, 'set'))
+		{
+			var set = Reflect.field(json, 'set');
+			node.variable = Reflect.field(set, 'variable').toInt();
+			node.operation = Std.string(Reflect.field(set, 'operation')).toOperator();
+			node.value = Std.string(Reflect.field(set, 'value'));
+		}
+		
 		return node;
 	}
 }

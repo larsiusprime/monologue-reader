@@ -27,7 +27,6 @@ import monologue.MonologueTree.MonologueTreeNode;
 import monologue.MonologueTree.TreeNodeBranch;
 import monologue.MonologueTree.TreeNodeNormal;
 import monologue.MonologueTree.TreeNodeSet;
-import monologue.MonologueTree.TreeNodeText;
 import monologue.MonologueTree.TreeNodeType;
 import haxe.Json;
 import monologue.IMonologueHost;
