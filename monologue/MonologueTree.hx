@@ -22,6 +22,7 @@
  */
 
 package monologue;
+import monologue.MonologueTree.TreeNodeNormal;
 using monologue.DynamicHelper;
 using monologue.MonologueHelper;
 
@@ -50,18 +51,17 @@ class MonologueTree
 			var ns:Array<MonologueTreeNode> = [];
 			for (entry in arr)
 			{
-				var type = Std.string(entry.jsonVar("type")).toTreeNodeType();
+				var type = Std.string(entry.jsonVar("nodetype")).toTreeNodeType();
 				var mNode:MonologueTreeNode = switch(type)
 				{
+					case NORMAL: TreeNodeNormal.fromJSON(entry);
 					case BRANCH: TreeNodeBranch.fromJSON(entry);
-					case TEXT: TreeNodeText.fromJSON(entry);
 					case SET: TreeNodeSet.fromJSON(entry);
 					default: null;
 				}
 				
 				if (mNode != null)
 				{
-					mNode.locFlag = "$T" + ID + "N" + mNode.ID;
 					ns.push(mNode);
 				}
 			}
@@ -83,51 +83,75 @@ class MonologueTreeNode
 	public var ID(default, null):Int=-1;
 	public var type(default, null):TreeNodeType;
 	public var link(default, null):Int =-1;
-	public var locFlag(default, null):String="";
+	public var conditions(default, null):Array<MonologueBranch> = new Array<MonologueBranch>();
+	public var elements(default, null):Map<String, String> = new Map<String, String>();
+	
+	public function parseElements(json:Dynamic):Void 
+	{
+		if (Reflect.hasField(json, 'elements'))
+		{
+			var els = Reflect.field(json, 'elements');
+			for (elementName in Reflect.fields(els)) 
+			{
+				elements.set(elementName, Reflect.field(els, elementName));
+			}
+		}
+	}
+	
+	public function parseConditions(json:Dynamic):Void 
+	{
+		if (Reflect.hasField(json, 'conditions'))
+		{
+			json.jsonArray('conditions', function (conditionsData:Array<Dynamic>):Dynamic {
+				for (condition in conditionsData)
+				{
+					if (condition != null) 
+					{
+						if (Reflect.hasField(condition, 'variable')) 
+						{
+							conditions.push(MonologueBranch.fromJSON(condition));
+						} 
+						else
+						{
+							link = Reflect.field(condition, 'link');
+						}
+					}
+				}
+				
+				return conditionsData;
+			});
+		}
+	}
 }
 
 @:allow(monologue)
-class TreeNodeText extends MonologueTreeNode
+class TreeNodeNormal extends MonologueTreeNode 
 {
-	public var name(default, null):String="";
-	public var voice(default, null):String = "";
-	
-	public function new(){}
+	public function new() {}
 	
 	public static function fromJSON(json:Dynamic):MonologueTreeNode
 	{
-		var node = new TreeNodeText();
+		var node = new TreeNodeNormal();
 		node.ID = json.jsonVar("id", "-1").toInt();
-		node.type = Std.string(json.jsonVar("type")).toTreeNodeType();
-		node.link = json.jsonVar("link", "-1").toInt();
-		node.name = Std.string(json.jsonVar("name"));
-		node.voice = Std.string(json.jsonVar("voice"));
+		node.type = Std.string(json.jsonVar("nodetype")).toTreeNodeType();
+		node.parseElements(json);
+		node.parseConditions(json);
 		return node;
 	}
 }
 
 @:allow(monologue)
 class TreeNodeBranch extends MonologueTreeNode
-{
-	public var variable(default, null):Int = -1;
-	public var value(default, null):Dynamic = null;
-	public var condition(default, null):Condition=UNKNOWN;
-	public var trueLink(default, null):Int=-1;
-	public var falseLink(default, null):Int =-1;
-	
-	public function new(){}
+{	
+	public function new() {}
 	
 	public static function fromJSON(json:Dynamic):MonologueTreeNode
 	{
 		var node = new TreeNodeBranch();
 		node.ID = json.jsonVar("id", "-1").toInt();
-		node.type = Std.string(json.jsonVar("type")).toTreeNodeType();
-		node.link = json.jsonVar("link", "-1").toInt();
-		node.variable = json.jsonVar("variable","-1").toInt();
-		node.value = json.jsonVar("value","");
-		node.condition = Std.string(json.jsonVar("condition")).toCondition();
-		node.trueLink = json.jsonVar("trueLink", "-1").toInt();
-		node.falseLink = json.jsonVar("falseLink", "-1").toInt();
+		node.type = Std.string(json.jsonVar("nodetype")).toTreeNodeType();
+		node.parseElements(json);
+		node.parseConditions(json);
 		return node;
 	}
 }
@@ -136,7 +160,7 @@ class TreeNodeBranch extends MonologueTreeNode
 class TreeNodeSet extends MonologueTreeNode
 {
 	public var variable(default, null):Int = -1;
-	public var operation(default, null):Operator=UNKNOWN;
+	public var operation(default, null):Operator = UNKNOWN;
 	public var value(default, null):String = "";
 	
 	public function new(){}
@@ -145,11 +169,18 @@ class TreeNodeSet extends MonologueTreeNode
 	{
 		var node = new TreeNodeSet();
 		node.ID = json.jsonVar("id", "-1").toInt();
-		node.type = Std.string(json.jsonVar("type")).toTreeNodeType();
-		node.link = json.jsonVar("link", "-1").toInt();
-		node.variable = json.jsonVar("variable").toInt();
-		node.operation = Std.string(json.jsonVar("operation")).toOperator();
-		node.value = Std.string(json.jsonVar("value", ""));
+		node.type = Std.string(json.jsonVar("nodetype")).toTreeNodeType();
+		node.parseElements(json);
+		node.parseConditions(json);
+		
+		if (Reflect.hasField(json, 'set'))
+		{
+			var set = Reflect.field(json, 'set');
+			node.variable = Reflect.field(set, 'variable').toInt();
+			node.operation = Std.string(Reflect.field(set, 'operation')).toOperator();
+			node.value = Std.string(Reflect.field(set, 'value'));
+		}
+		
 		return node;
 	}
 }
@@ -158,7 +189,7 @@ enum TreeNodeType
 {
 	BRANCH;
 	SET;
-	TEXT;
+	NORMAL;
 	CUSTOM;
 	UNKNOWN;
 }

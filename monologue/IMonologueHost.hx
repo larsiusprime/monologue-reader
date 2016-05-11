@@ -24,7 +24,7 @@
 package monologue;
 import monologue.Controller.VariableState;
 import monologue.MonologueTree.MonologueTreeNode;
-import monologue.MonologueTree.TreeNodeText;
+import monologue.MonologueTree.TreeNodeNormal;
 
 interface IMonologueHost 
 {
@@ -32,7 +32,7 @@ interface IMonologueHost
 	 * Implement this to display a text node in your application somehow
 	 * @param	node
 	 */
-	public function showTextNode(node:TreeNodeText):Void;
+	public function showNormalNode(node:TreeNodeNormal):Void;
 	
 	/**
 	 * Implement this to display a custom node in your application somehow
